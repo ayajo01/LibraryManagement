@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="template" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <title>AddBook</title>
+    <style>
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 6px;
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="p-3 m-2" layout:fragment="content">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Add a book</div>
+            <div class="card-body">
+                <form action="/saveBook" method="post" enctype="multipart/form-data">
+                    <div>
+                        <label for="image" class="form-label">Upload Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                        <img id="image-preview" class="image-preview"/>
+                    </div>
+                    <div>
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                        <span class="text-danger" th:errors="${book.title}"></span>
+                    </div>
+                    <div>
+                        <label for="author" class="form-label">Author</label>
+                        <input type="text" class="form-control" id="author" name="author">
+                        <span class="text-danger" th:errors="${book.author}"></span>
+                    </div>
+                    <div>
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-control">
+                            <option th:each="cat : ${T(com.example.biblio.dao.entities.Category).values()}"
+                                    th:value="${cat}" th:text="${cat}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="10"></textarea>
+                    </div>
+                    <div>
+                        <label for="file" class="form-label">Upload File</label>
+                        <input type="file" class="form-control" id="file" name="file">
+                    </div>
+                    <div class="center-button mt-2">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('image-preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+</body>
+</html>

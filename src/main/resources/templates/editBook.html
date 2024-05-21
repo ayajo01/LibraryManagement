@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template" lang="en"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+  <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <title>Edit a book</title>
+  <style>
+    .form-control {
+      border-radius: 6px;
+    }
+
+    .center-button {
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-label {
+      font-weight: bold;
+    }
+
+    .image-preview {
+      max-width: 200px;
+      max-height: 200px;
+      margin-top: 10px;
+    }
+
+    .btn-edit {
+      width: 50px;
+    }
+  </style>
+</head>
+<body>
+<div class="p-3 m-2" layout:fragment="content">
+  <div class="card">
+    <div class="card-header">Edit a book</div>
+    <div class="card-body">
+      <form action="/edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" th:value="${bookToBeUpdated.getId()}">
+        <div>
+          <label class="form-label">Title:</label>
+          <input class="form-control" name="title" type="text" th:value="${bookToBeUpdated.getTitle()}">
+        </div>
+        <div>
+          <label class="form-label">Author:</label>
+          <input class="form-control" name="author" type="text" th:value="${bookToBeUpdated.getAuthor()}">
+        </div>
+        <div>
+          <label class="form-label">Category:</label>
+          <select class="form-control" name="category">
+            <option th:each="cat : ${T(com.example.biblio.dao.entities.Category).values()}" th:value="${cat}"
+                    th:text="${cat}" th:selected="${cat == bookToBeUpdated.getCategory()}"></option>
+          </select>
+        </div>
+        <div>
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description" rows="3" th:text="${bookToBeUpdated.description}"></textarea>
+        </div>
+
+
+        <div>
+          <label for="file" class="form-label">Upload File:</label>
+          <input type="file" class="form-control" id="file" name="file">
+        </div>
+        <div>
+          <label for="image" class="form-label">Upload Image:</label>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+          <img id="image-preview" class="image-preview" th:if="${bookToBeUpdated.imagePath != null}" th:src="@{'/images/' + ${bookToBeUpdated.imagePath}}"/>
+        </div>
+        <div class="center-button mt-2">
+          <input class="btn btn-primary form-control btn-edit" type="submit" value="Edit">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+      const output = document.getElementById('image-preview');
+      output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+</body>
+</html>
